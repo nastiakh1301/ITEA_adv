@@ -1,0 +1,65 @@
+class Car:
+    def __init__(self, speed, color, name, is_police):
+        self.speed = speed
+        self.color = color
+        self.name = name
+        self.is_police = is_police
+
+
+    def go(self):
+        return f"{self.name} едет"
+
+
+    def stop(self):
+        return f"{self.name} стоит"
+
+
+    def turn_left(self):
+        return f"{self.name} повернула на лево"
+
+
+    def turn_right(self):
+        return f"{self.name} повернула на право"
+
+
+    def show_speed(self):
+        return f"У {self.name} скорость {self.speed}"
+
+
+class TownCar(Car):
+    def __init__(self, speed, color, name, is_police):
+        super.__init__(self, speed, color, name, is_police)
+
+    def show_speed(self):
+        print(f"У {self.name} скорость {self.speed}")
+        if self.speed > 60:
+            return f"У {self.name} скорость превышена"
+        else:
+            return f"У {self.name} скорость в норме"
+
+
+class SportCar(Car):
+    def __init__(self, speed, color, name, is_police):
+        super.__init__(self, speed, color, name, is_police)
+
+
+class WorkCar(Car):
+    def show_speed(self):
+        print(f"У {self.name} скорость {self.speed}")
+        if self.speed > 40:
+            return f"У {self.name} скорость превышена"
+        else:
+            return f"У {self.name} скорость в норме"
+
+class PoliceCar(Car):
+    def __init__(self, speed, color, name, is_police):
+        super.__init__(self, speed, color, name, is_police)
+
+    def check_police(self):
+        if self.is_police is True:
+            return f'{self.name} полиция'
+        else:
+            return f'{self.name} не полиция'
+
+
+car1 = Car("60", "blue", "Nisan", "0")
