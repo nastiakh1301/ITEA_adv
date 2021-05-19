@@ -1,0 +1,9 @@
+a = int(input("Input a = "))
+b = int(input("Input b = "))
+c = int(input("Input c = "))
+
+def max_sum(a, b, c):
+    res = a + b + c - min(a, b, c)
+    return res
+
+print(f"Sum of 2 biggest: {max_sum(a, b, c)}")

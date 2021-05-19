@@ -1,0 +1,29 @@
+class Matrix:
+    def __init__(self, matr1, matr2):
+        self.matr1 = matr1
+        self.matr2 = matr2
+
+    def __add__(self):
+        matr = [[0, 0],
+                [0, 0]]
+        for i in range(len(self.matr1)):
+            for j in range(len(self.matr2)):
+                matr[i][j] = self.matr1[i][j] + self.matr2[i][j]
+        return str('\n'.join(['\t'.join([str(j) for j in i]) for i in matr]))
+
+
+    def __sub__(self):
+        matr = [[0, 0],
+                [0, 0]]
+        for i in range(len(self.matr1)):
+            for j in range(len(self.matr2)):
+                matr[i][j] = self.matr1[i][j] - self.matr2[i][j]
+        return str('\n'.join(['\t'.join([str(j) for j in i]) for i in matr]))
+
+test_martix = Matrix([[1, 1],
+                    [0, 2]],
+                    [[2, 3],
+                    [5, 0]])
+
+print(test_martix.__add__())
+print(test_martix.__sub__())

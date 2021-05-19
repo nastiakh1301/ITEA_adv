@@ -1,0 +1,18 @@
+from datetime import datetime
+
+def time_counter(f):
+    def inner(*args, **kwargs):
+        start = datetime.now().second
+        res = f(*args, **kwargs)
+        end = datetime.now().second
+        work_time = end - start
+        print(f"{work_time} seconds")
+        return res
+    return inner
+
+
+def start_func(a, b, c):
+    print("Function work`s time")
+    return a + b + c
+
+time_counter(start_func)(35, 0, 1)
