@@ -1,0 +1,18 @@
+n = int(input("Input n: "))
+s = int(input("Input first term in sequence (0/1): "))
+def fibonachi(n, s):
+    if s == 1:
+        if n < 3:
+            return 1
+    elif s == 0:
+        if n == 1:
+            return 0
+        elif n in (2, 3):
+            return 1
+    else:
+        s = int(input("First term must be 0 or 1! Try again): "))
+        return fibonachi(n, s)
+    return fibonachi(n - 1, s) + fibonachi(n - 2, s)
+
+res = fibonachi(n, s)
+print(res)
