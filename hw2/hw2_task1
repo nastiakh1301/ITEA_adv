@@ -27,10 +27,8 @@ class Car:
 
 
 class TownCar(Car):
-    def __init__(self, speed, color, name, is_police):
-        super.__init__(self, speed, color, name, is_police)
-
     def show_speed(self):
+        super().show_speed()
         print(f"У {self.name} скорость {self.speed}")
         if self.speed > 60:
             return f"У {self.name} скорость превышена"
@@ -39,12 +37,14 @@ class TownCar(Car):
 
 
 class SportCar(Car):
-    def __init__(self, speed, color, name, is_police):
-        super.__init__(self, speed, color, name, is_police)
+    def show_speed(self):
+        super().show_speed()
+        print(f"У {self.name} скорость {self.speed}")
 
 
 class WorkCar(Car):
     def show_speed(self):
+        super().show_speed()
         print(f"У {self.name} скорость {self.speed}")
         if self.speed > 40:
             return f"У {self.name} скорость превышена"
@@ -52,9 +52,6 @@ class WorkCar(Car):
             return f"У {self.name} скорость в норме"
 
 class PoliceCar(Car):
-    def __init__(self, speed, color, name, is_police):
-        super.__init__(self, speed, color, name, is_police)
-
     def check_police(self):
         if self.is_police is True:
             return f'{self.name} полиция'
@@ -63,3 +60,4 @@ class PoliceCar(Car):
 
 
 car1 = Car("60", "blue", "Nisan", "0")
+print(car1.show_speed())
