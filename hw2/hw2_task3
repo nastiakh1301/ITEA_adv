@@ -1,29 +1,52 @@
 class Matrix:
-    def __init__(self, matr1, matr2):
-        self.matr1 = matr1
-        self.matr2 = matr2
+    def __init__(self, matr):
+        self.matr = matr
 
-    def __add__(self):
-        matr = [[0, 0],
-                [0, 0]]
-        for i in range(len(self.matr1)):
-            for j in range(len(self.matr2)):
-                matr[i][j] = self.matr1[i][j] + self.matr2[i][j]
+
+    def __add__(self, other):
+        matr = []
+        for i in range(len(self.matr)):
+            matr.append([])
+            for j in range(len(self.matr[0])):
+                matr[i].append(self.matr[i][j] + other.matr[i][j])
         return str('\n'.join(['\t'.join([str(j) for j in i]) for i in matr]))
 
 
-    def __sub__(self):
-        matr = [[0, 0],
-                [0, 0]]
-        for i in range(len(self.matr1)):
-            for j in range(len(self.matr2)):
-                matr[i][j] = self.matr1[i][j] - self.matr2[i][j]
+    def __sub__(self, other):
+        matr = []
+        for i in range(len(self.matr)):
+            matr.append([])
+            for j in range(len(self.matr[0])):
+                matr[i].append(self.matr[i][j] - other.matr[i][j])
         return str('\n'.join(['\t'.join([str(j) for j in i]) for i in matr]))
 
-test_martix = Matrix([[1, 1],
-                    [0, 2]],
-                    [[2, 3],
-                    [5, 0]])
 
-print(test_martix.__add__())
-print(test_martix.__sub__())
+    def __mul__(self, n):
+        matr = []
+        for i in range(len(self.matr)):
+            matr.append([])
+            for j in range(len(self.matr[0])):
+                matr[i].append(self.matr[i][j] * n)
+        return str('\n'.join(['\t'.join([str(j) for j in i]) for i in matr]))
+
+
+    def __truediv__(self, n):
+        if n == 0:
+            print("error");
+        else:
+            matr = []
+            for i in range(len(self.matr)):
+                matr.append([])
+                for j in range(len(self.matr[0])):
+                    matr[i].append(self.matr[i][j] / n)
+            return str('\n'.join(['\t'.join([str(j) for j in i]) for i in matr]))
+
+
+
+matr1 = Matrix([[4, 2], [0, 2]])
+matr2 = Matrix([[2, 3], [5, 0]])
+
+print(matr1.__add__(matr2))
+print(matr1.__sub__(matr2))
+print(matr1.__mul__(2))
+print(matr1.__truediv__(2))
