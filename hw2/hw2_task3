@@ -46,7 +46,8 @@ class Matrix:
 matr1 = Matrix([[4, 2], [0, 2]])
 matr2 = Matrix([[2, 3], [5, 0]])
 
-print(matr1.__add__(matr2))
-print(matr1.__sub__(matr2))
-print(matr1.__mul__(2))
-print(matr1.__truediv__(2))
+print(matr1 + matr2)
+print(matr1 - matr2)
+print(matr1 * 2)
+print(matr1 / 2)
+
