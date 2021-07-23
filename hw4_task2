@@ -1,0 +1,105 @@
+from abc import ABC, abstractmethod
+
+class Office_equipment(ABC):
+
+    @abstractmethod
+    def start(self):
+        pass
+
+    @abstractmethod
+    def stop(self):
+        pass
+
+    @abstractmethod
+    def status(self):
+        pass
+
+class Printer(Office_equipment):
+    def __init__(self, model, year):
+        self.model = model
+        self.year = year
+        self.__start_work = False
+
+    def start(self):
+        self.__start_work = True
+        print("Printer works")
+        if self.__start_work == False:
+            print("Printer doesn't work, check serviceability")
+        else:
+            print("Printing completed")
+
+    def stop(self):
+        self.__start_work = False
+        print("Printer doesn't work")
+
+    def status(self):
+        if self.__start_work == True:
+            print("Printer is active")
+        else:
+            print("Printer isn't active")
+
+
+class Scanner(Office_equipment):
+    def __init__(self, model, year):
+        self.model = model
+        self.year = year
+        self.__start_work = False
+
+    def start(self, ink):
+        self.__start_work = True
+        self.ink = True
+        print("Scanner works")
+        if self.__start_work == False or self.ink == False:
+            print("Scanner doesn't work, check ink")
+        else:
+            print("Scan completed")
+
+    def stop(self):
+        self.__start_work = False
+        print("Scanner doesn't work")
+
+    def status(self):
+        if self.__start_work == True:
+            print("Scanner is active")
+        else:
+            print("Scanner isn't active")
+
+
+class Xerox(Office_equipment):
+    def __init__(self, model, year):
+        self.model = model
+        self.year = year
+        self.__start_work = False
+
+    def start(self, paper):
+        self.__start_work = True
+        self.paper = True
+        print("Xerox works")
+        if self.__start_work == False or self.paper == False:
+            print("Xerox doesn't work, check paper")
+        else:
+            print("Copy completed")
+
+    def stop(self):
+        self.__start_work = False
+        print("Xeros doesn't work")
+
+    def status(self):
+        if self.__start_work == True:
+            print("Xerox is active")
+        else:
+            print("Xerox isn't active")
+
+class Storage:
+    def __init__(self):
+        self.devices_list = []
+
+    def add_devices(self, data):
+        self.devices_list.append(data)
+        return f'Added: {data}'
+
+    def __iter__(self):
+        count = 1
+        for i in self.devices_list:
+            yield f'{count}: {i}'
+            count += 1
