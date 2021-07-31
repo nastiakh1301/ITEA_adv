@@ -1,0 +1,115 @@
+import psycopg2
+from psycopg2 import sql
+from datetime import datetime
+
+conn = psycopg2.connect("postgres://postgres:1234@localhost:5432/postgres")
+cursor = conn.cursor()
+
+create_orders = sql.SQL('''
+CREATE TABLE IF NOT EXISTS orders (
+    order_id SERIAL PRIMARY KEY,
+    created_dt DATE NOT NULL,
+    updated_dt DATE,
+    order_type TEXT NOT NULL,
+    description TEXT NOT NULL,
+    status TEXT NOT NULL,
+    serial_no INTEGER NOT NULL,
+    creator_id INTEGER NOT NULL
+    );
+''')
+
+create_departments = sql.SQL('''
+CREATE TABLE IF NOT EXISTS departments (
+    department_id SERIAL PRIMARY KEY,
+    department_name TEXT NOT NULL
+    );
+''')
+
+create_employees = sql.SQL('''
+CREATE TABLE IF NOT EXISTS employees (
+    employee_id SERIAL PRIMARY KEY,
+    fio TEXT NOT NULL,
+    position TEXT NOT NULL,
+    department_id INTEGER NOT null,
+    FOREIGN KEY (department_id) REFERENCES departments (department_id)
+    ON UPDATE SET NULL
+    ON DELETE CASCADE
+    );
+''')
+
+with conn:
+    cursor.execute(create_orders)
+    cursor.execute(create_departments)
+    cursor.execute(create_employees)
+
+orders_data = [(datetime.now(), "Печать", "Печать фото", "В работе", 123, 1),
+               (datetime.now(), "Печать", "Печать документов", "В ожидании", 254, 2),
+               (datetime.now(), "Печать", "Печать на ткани", "Выполнено", 124, 3),
+               (datetime.now(), "Печать", "Печать на аксессуарах", "В ожидании", 256, 4),
+               (datetime.now(), "Ксерокопия", "Ксерокопия документов (ч/б)", "В работе", 987, 5),
+               (datetime.now(), "Ксерокопия", "Ксерокопия документов (цвет)", "Выполнено", 357, 6),
+               (datetime.now(), "Сканирование", "Скан документов", "В работе", 654, 7),
+               (datetime.now(), "Сканирование", "Скан фото", "В ожидании", 246, 8),
+               (datetime.now(), "3D-печать", "3D-печать (маленькие размеры)", "Выполнено", 109, 9),
+               (datetime.now(), "3D-печать", "3D-печать (большие размеры)", "В работе", 999, 10)]
+
+departments_data = ["Print-center 1",
+                    "Print-center 2",
+                    "Print-center 3",
+                    "Print-center 4",
+                    "Print-center 5"]
+
+employees_data = [("Полищук Г.В.", "директор", 1),
+                  ("Коржик Л.Т.", "бухгалтер", 1),
+                  ("Кузьмак В.Д.", "менеджер", 2),
+                  ("Сокол Г.В.", "продавец", 3),
+                  ("Шаповал Ф.С.", "продавец", 4),
+                  ("Рокищук А.М.", "продавец", 5)]
+
+
+INSERT_ORDERS = sql.SQL("""
+INSERT INTO orders (created_dt, order_type, description, status, serial_no, creator_id) 
+VALUES (%s, %s, %s, %s, %s, %s)
+""")
+
+with conn, cursor:
+    for o in orders_data:
+        cursor.execute(INSERT_ORDERS, o)
+
+
+INSERT_DEPARTMENTS = sql.SQL("""
+INSERT INTO departments (department_id, department_name) VALUES (%s, %s)
+""")
+
+with conn, cursor:
+    for d in departments_data:
+        cursor.execute(INSERT_DEPARTMENTS, [d])
+
+
+INSERT_EMPLOYEES = sql.SQL("""
+INSERT INTO employees (fio, position, department_id) VALUES (%s, %s, %s)
+""")
+
+with conn, cursor:
+    for e in employees_data:
+        cursor.execute(INSERT_EMPLOYEES, e)
+
+
+with conn, cursor:
+    cursor.execute('''SELECT * FROM orders WHERE status = 'В ожидании' AND created_dt = '2021-07-31' AND creator_id = 5''')
+    order_select = cursor.fetchall()
+    for i in order_select:
+        print(i)
+
+with conn, cursor:
+    cursor.execute('''SELECT * FROM employees 
+    LEFT JOIN departments ON employees.department_id = departments.department_id''')
+    department_select = cursor.fetchall()
+    for i in department_select:
+        print(i)
+
+with conn, cursor:
+    cursor.execute('''SELECT count(*) FROM orders WHERE status = 'В ожидании' AND GROUP BY (status)''')
+    count_select = cursor.fetchall()
+    for i in count_select:
+        print(i)
