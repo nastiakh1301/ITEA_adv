@@ -1,0 +1,25 @@
+from datetime import datetime
+import datetime
+
+def decorator(obj):
+    def inner(*args, **kwargs):
+        with open('file.txt', 'a', encoding='utf-8') as f:
+            data = f'Пример записи: {datetime.datetime.now()} Создан экземпляр класса {obj} по адресу памяти {id(obj)}\n'
+            f.write(data)
+        return obj(*args, **kwargs)
+    return inner
+
+
+@decorator
+class Test1:
+    print("Test message")
+
+@decorator
+class Test2:
+    def __init__(self, c):
+        self.c = c
+
+
+
+test1 = Test1()
+test2 = Test2(1)
