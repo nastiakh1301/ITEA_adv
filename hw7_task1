@@ -1,0 +1,121 @@
+import psycopg2
+from datetime import datetime
+from abc import ABC, abstractmethod
+from envparse import Env
+
+env = Env()
+DB_URL = env.str("SOME_DB_URL", default="postgres://postgres:nastia1234)@localhost:5432/postgres")
+connect = psycopg2.connect(DB_URL)
+
+
+class BaseModel(ABC):
+    @abstractmethod
+    def create_new_application(self, *args):
+        pass
+
+    @abstractmethod
+    def delete_data_by_id(self):
+        pass
+
+class Orders(BaseModel):
+    CREATE_ORDER_QUERY = """INSERT INTO orders (created_dt, order_type, status, serial_no, creator_id, description) 
+                           VALUES (%s, %s, %s, %s, %s, %s) RETURNING order_id"""
+    DELETE_ORDERS_QUERY = """DELETE FROM orders WHERE order_id = %s"""
+    CHANGE_STATUS_ORDER_QUERY = """UPDATE orders SET updated_dt = %s, status = %s WHERE order_id = %s"""
+    CHANGE_DESCRIPTION_ORDER_QUERY = """UPDATE orders SET updated_dt = %s, description = %s WHERE order_id = %s"""
+    __order_id_counter = 1
+
+    def __init__(self, order_type, status, serial_no, creator_id, description=None, order_id=None):
+        Orders.data_time = str(datetime.now().strftime("%d-%m-%Y"))
+        self.created_dt = Orders.data_time
+        self.__order_id = order_id
+        self.order_type = order_type
+        self.status = status
+        self.serial_no = serial_no
+        self.creator_id = creator_id
+        self.description = description
+        self.id = Orders.__id_counter
+        Orders.__id_counter += 1
+
+    def create_new_application(self):
+        with connect, connect.cursor() as cursor:
+            cursor.execute(self.__class__.CREATE_ORDER_QUERY, (datetime.now(), self.order_type, self.description,
+                                                          self.status, self.serial_no, self.creator_id))
+            order_id = cursor.fetchone()[0]
+            self.__order_id = order_id
+            return {'order_id': self.__order_id}
+
+    def delete_data_by_id(self):
+        if not self.__order_id:
+            raise BaseModel(message="Order_id param is required for deleting!")
+        with connect, connect.cursor() as cursor:
+            cursor.execute(self.__class__.DELETE_ORDERS_QUERY, (self.__order_id, ))
+
+    def change_status(self, new_status):
+        with connect, connect.cursor() as cursor:
+            cursor.execute(self.__class__.CHANGE_STATUS_ORDER_QUERY, (new_status, self.__order_id, ))
+
+    def change_description(self, new_description):
+        with connect, connect.cursor() as cursor:
+            cursor.execute(self.__class__.CHANGE_DESCRIPTION_ORDER_QUERY, (new_description, self.__order_id, ))
+
+class Departments(BaseModel):
+    CREATE_DEPARTMENTS_QUERY = """INSERT INTO departments (department_name) VALUES (%s) RETURNING department_id"""
+    DELETE_DEPARTMENTS_QUERY = """DELETE FROM departments WHERE department_id = %s"""
+    CHANGE_DEPARTMENT_NAME_QUERY = """UPDATE departments SET department_name = %s WHERE department_id = %s"""
+
+    def __init__(self, department_name, department_id=None):
+        self.department_name = department_name
+        self.__department_id = department_id
+
+    def create_new_application(self):
+        with connect, connect.cursor() as cursor:
+            cursor.execute(self.__class__.CREATE_DEPARTMENTS_QUERY, (self.department_name, ))
+            department_id = cursor.fetchone()[0]
+            self.__department_id = department_id
+            return {'department_id': self.__department_id}
+
+    def delete_data_by_id(self):
+        if not self.__department_id:
+            raise BaseModel(message="Department_id param is required for deleting!")
+        with connect, connect.cursor() as cursor:
+            cursor.execute(self.__class__.DELETE_DEPARTMENTS_QUERY, (self.__department_id, ))
+
+    def change_department_name(self, new_department_name):
+        with connect, connect.cursor() as cursor:
+            cursor.execute(self.__class__.CHANGE_DEPARTMENT_NAME_QUERY, (new_department_name, self.__department_id, ))
+
+
+class Employees(BaseModel):
+    CREATE_EMPLOYEES_QUERY = """INSERT INTO employees (fio, position, department_id) VALUES (%s, %s, %s) 
+                                RETURNING employee_id"""
+    DELETE_EMPLOYEES_QUERY = """DELETE FROM employees WHERE employee_id = %s"""
+    CHANGE_POSITION_QUERY = """UPDATE employees SET position = %s WHERE employee_id = %s"""
+    CHANGE_DEPARTMENT_QUERY = """UPDATE employees SET department_id = %s WHERE employee_id = %s"""
+
+    def __init__(self, fio, position, department_id, employee_id=None):
+        self.fio = fio
+        self.position = position
+        self.department_id = department_id
+        self.__employee_id = employee_id
+
+    def create_new_application(self):
+        with connect, connect.cursor() as cursor:
+            cursor.execute(self.__class__.CREATE_EMPLOYEES_QUERY, (self.fio, self.position, self.department_id, ))
+            employee_id = cursor.fetchone()[0]
+            self.__employee_id = employee_id
+            return {'employee_id': self.__employee_id}
+
+    def delete_data_by_id(self):
+        if not self.__employee_id:
+            raise BaseModel(message="Employee_id param is required for deleting!")
+        with connect, connect.cursor() as cursor:
+            cursor.execute(self.__class__.DELETE_EMPLOYEES_QUERY, (self.__employee_id, ))
+
+    def change_position(self, new_position):
+        with connect, connect.cursor() as cursor:
+            cursor.execute(self.__class__.CHANGE_POSITION_QUERY, (new_position, self.__employee_id, ))
+
+    def change_department(self, new_department):
+        with connect, connect.cursor() as cursor:
+            cursor.execute(self.__class__.CHANGE_DEPARTMENT_QUERY, (new_department, self.__employee_id, ))
